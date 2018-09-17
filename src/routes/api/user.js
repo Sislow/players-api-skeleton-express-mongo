@@ -21,6 +21,27 @@ router.post('/', (req, res, next) => {
     }).catch(next);
 });
 
-const getToken = user => jwt.sign({ userId: user._id }, jwtsecret);
+
+router.put('/:userid', (req, res, next) => {
+  let userid = req.params.userid;
+  let body = req.body;
+  const user = {
+    email: req.body.email,
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    password: req.body.password
+  };
+
+  User.update({"_id": userid}, userObj, function(err, user){
+        if (err) {
+          res.status(403).send(err);
+        }
+        User.findOne({"_id": userid}, function (err, user){
+          res.status(200).send({ success: true, user});
+        });
+      });
+  });
+
+const getToken = user => jwt.sign({ userid: user._id }, jwtsecret);
 
 module.exports = router;
